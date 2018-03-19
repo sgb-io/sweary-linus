@@ -1,4 +1,4 @@
-# Most Common Words
+# Sweary Linus
 
 This project contains implementations of a simple program in various different programming languages and programming styles. It is used as a personal learning exersize.
 
