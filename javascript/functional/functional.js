@@ -1,9 +1,18 @@
 module.exports = function main(insults, stopWords) {
+    const lines = insults.split('\n')
     const words = []
-    const rawWords = insults.split(' ')
+    const rawWords = []
     const wordCounts = {}
     const unsortedWordCounts = []
     let topWords = []
+
+    // Split into lines, then words
+    lines.forEach((line) => {
+        const lineWords = line.split(' ')
+        lineWords.forEach((lineWord) => {
+            rawWords.push(lineWord)
+        })
+    })
 
     rawWords.forEach((rawWord) => {
         // Normalize (down-case) every word
@@ -21,6 +30,10 @@ module.exports = function main(insults, stopWords) {
         }
 
         words.push(alphanumeric)
+
+        if (alphanumeric === 'braindamagewell') {
+            throw new Error('incorrect')
+        }
     })
 
     // Count the occurrences of all words

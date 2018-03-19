@@ -9,7 +9,7 @@ It was inspired by [Exercises in Programming Style by Cristina Videira Lopes](ht
 The program counts the occurrences of words (term frequencies) in a file. The sample input is a list of [Linus Torvalds insults](https://en.wikiquote.org/wiki/Linus_Torvalds).
 
 The program should:
-  - Read input words from the file
+  - Read input lines from the file and turn into individual words
   - Remove all non-alphanumeric characters
   - Normalize (down-cases) the words
   - Remove stop words (“the”, “a”, “for” etc)
