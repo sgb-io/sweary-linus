@@ -30,10 +30,6 @@ module.exports = function main(insults, stopWords) {
         }
 
         words.push(alphanumeric)
-
-        if (alphanumeric === 'braindamagewell') {
-            throw new Error('incorrect')
-        }
     })
 
     // Count the occurrences of all words
