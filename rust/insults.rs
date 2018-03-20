@@ -2,6 +2,7 @@ use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::collections::HashMap;
 
 fn get_file_contents(file_path: String) -> (String) {
     // Create a path to the desired file
@@ -79,21 +80,54 @@ fn process_words(
     };
 
     // Remove stop words & blank words
-    words.retain(|word| !stopwords.contains(word) || word == "");
+    words.retain(|word| !stopwords.contains(word));
+    words.retain(|word| word != "");
 
     return words;
 }
 
+fn count_words(processed_words: Vec<String>) -> (HashMap<String, i32>) {
+    // s.matches(t).count();
+    let mut counted_words = HashMap::new();
+    for word in processed_words {
+        let count = counted_words.entry(word).or_insert(0);
+        *count += 1;
+    }
+
+    return counted_words
+}
+
 // This is the main function
 fn main() {
+    // Get all the words from disk
     let raw_words = get_raw_words();
     let stopwords = get_stopwords();
-    // print!("raw_words: {:?}", raw_words);
-    print!("\n");
-    print!("\n");
-    print!("\n");
-    // print!("stopwords: {:?}", stopwords);
 
+    // Process all the words
     let words = process_words(raw_words, stopwords);
-    print!("words: {:?}", words);
+
+    // Count all the processed words
+    let counted_words = count_words(words);
+    let mut counted_words_vec: Vec<_> = counted_words.iter().collect();
+
+    // Sort by most-used
+    counted_words_vec
+        .sort_by(|a, b|
+            a.1.cmp(b.1).reverse()
+        );
+
+    // Take the top 25
+    let top_words = counted_words_vec.get(0..25);
+
+    // Print them out
+    for wordcounts in &top_words {
+        for (index, wordcount) in wordcounts.iter().enumerate() {
+            println!(
+                "#{:?} - {:?}, {:?} occurrences",
+                index + 1,
+                wordcount.0,
+                wordcount.1
+            );
+        }
+    }
 }
