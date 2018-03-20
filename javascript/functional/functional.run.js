@@ -3,8 +3,6 @@ const main = require('./functional')
 
 const insults = fs.readFileSync('./../../insults.txt', 'utf8')
 const stopWords = fs.readFileSync('./../../stopwords.txt', 'utf8')
-    .split('\n')
-
 const topWords = main(insults, stopWords) // Will print result to console
 
 const expectedTopWords = [
