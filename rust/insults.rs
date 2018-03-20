@@ -58,13 +58,28 @@ fn get_stopwords() -> (Vec<String>) {
     return raw_words;
 }
 
+fn remove_non_alphanumeric(word: String) -> (String) {
+    return word
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .collect();
+}
+
 fn process_words(
     raw_words: Vec<String>,
     stopwords: Vec<String>,
 ) -> (Vec<String>) {
     let mut words = Vec::new();
 
-    // TODO raw_words and stopwords are now arrays of just words (Y)
+    // Lowercase words & remove non-alphanumeric characters
+    for word in raw_words {
+        words.push(
+            remove_non_alphanumeric(word.to_lowercase())
+        )
+    };
+
+    // Remove stop words & blank words
+    words.retain(|word| !stopwords.contains(word) || word == "");
 
     return words;
 }
@@ -73,11 +88,12 @@ fn process_words(
 fn main() {
     let raw_words = get_raw_words();
     let stopwords = get_stopwords();
-    print!("raw_words: {:?}", raw_words);
+    // print!("raw_words: {:?}", raw_words);
     print!("\n");
     print!("\n");
     print!("\n");
-    print!("stopwords: {:?}", stopwords);
+    // print!("stopwords: {:?}", stopwords);
 
-    process_words(raw_words, stopwords);  
+    let words = process_words(raw_words, stopwords);
+    print!("words: {:?}", words);
 }
