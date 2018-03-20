@@ -1,23 +1,32 @@
-module.exports = function main(insults, stopWords) {
+function getRawWords(insults) {
     const lines = insults.split('\n')
-    const words = []
-    const rawWords = []
-    const wordCounts = {}
-    const unsortedWordCounts = []
-    let topWords = []
 
-    // Split into lines, then words
-    lines.forEach((line) => {
-        const lineWords = line.split(' ')
-        lineWords.forEach((lineWord) => {
-            rawWords.push(lineWord)
+    return lines
+        .map((lineWords) => {
+            return lineWords
+                .split(' ')
+                .map(lineWord => lineWord)
         })
-    })
+        .reduce((a, b) => {
+            return a.concat(b)
+        })
+}
+
+function normaliseRawWord(rawWord) {
+    return rawWord.toLowerCase()
+}
+
+function removeAlphanumeric(word) {
+    return word.replace(/\W/g, '')
+}
+
+function processWords(rawWords, stopWords) {
+    const words = []
 
     rawWords.forEach((rawWord) => {
         // Normalize (down-case) every word
-        const rawWordLower = rawWord.toLowerCase()
-        const alphanumeric = rawWordLower.replace(/\W/g, '')
+        const rawWordLower = normaliseRawWord(rawWord)
+        const alphanumeric = removeAlphanumeric(rawWordLower)
 
         // Exclude non-alphanumeric characters
         if (alphanumeric === '') {
@@ -32,6 +41,12 @@ module.exports = function main(insults, stopWords) {
         words.push(alphanumeric)
     })
 
+    return words
+}
+
+function getWordCounts(words) {
+    const wordCounts = {}
+
     // Count the occurrences of all words
     words.forEach((word) => {
         if (wordCounts.hasOwnProperty(word)) {
@@ -41,16 +56,23 @@ module.exports = function main(insults, stopWords) {
 
         wordCounts[word] = 1
     })
-    
-    Object.keys(wordCounts).forEach((word) => {
-        unsortedWordCounts.push({
-            word,
-            count: wordCounts[word],
-        })
-    })
 
-    // Finally, print out the 25 most common words in order
-    topWords = unsortedWordCounts
+    return Object.keys(wordCounts)
+        .map((word) => {
+            return {
+                word,
+                count: wordCounts[word],
+            }
+        })
+}
+
+function main(insults, stopWords) {
+    const rawWords = getRawWords(insults)
+    const words = processWords(rawWords, stopWords)
+    const unsortedWordCounts = getWordCounts(words)
+
+    // Print out the 25 most common words in order
+    const topWords = unsortedWordCounts
         .sort((a, b) => (b.count - a.count))
         .slice(0, 25)
 
@@ -63,3 +85,5 @@ module.exports = function main(insults, stopWords) {
 
     return topWords
 }
+
+module.exports = main
