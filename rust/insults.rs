@@ -26,21 +26,58 @@ fn get_file_contents(file_path: String) -> (String) {
     };
 }
 
-fn get_insults() -> (String) {
+fn get_raw_words() -> (Vec<String>) {
     let insults = "../insults.txt".to_string();
-    return get_file_contents(insults);
+    let raw_insults = get_file_contents(insults);
+
+    let mut raw_words = Vec::new();
+    raw_insults
+        .split('\n')
+        .for_each(|line|
+            line.split(' ')
+                .for_each(|word|
+                    raw_words.push(word.to_string())
+                )
+        );
+
+    return raw_words;
 }
 
 
-fn get_stopwords() -> (String) {
+fn get_stopwords() -> (Vec<String>) {
     let stopwords = "../stopwords.txt".to_string();
-    return get_file_contents(stopwords);
+    let raw_stopwords = get_file_contents(stopwords);
+
+    let mut raw_words = Vec::new();
+    raw_stopwords
+        .split('\n')
+        .for_each(|line|
+            raw_words.push(line.to_string())
+        );
+
+    return raw_words;
+}
+
+fn process_words(
+    raw_words: Vec<String>,
+    stopwords: Vec<String>,
+) -> (Vec<String>) {
+    let mut words = Vec::new();
+
+    // TODO raw_words and stopwords are now arrays of just words (Y)
+
+    return words;
 }
 
 // This is the main function
 fn main() {
-	let insults = get_insults();
+    let raw_words = get_raw_words();
     let stopwords = get_stopwords();
-	print!("insults: {:?}", insults);
+    print!("raw_words: {:?}", raw_words);
+    print!("\n");
+    print!("\n");
+    print!("\n");
     print!("stopwords: {:?}", stopwords);
+
+    process_words(raw_words, stopwords);  
 }
