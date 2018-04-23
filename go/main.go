@@ -15,6 +15,28 @@ type WordOccurences struct {
 	Occurences int
 }
 
+type byOccurenceThenWord []WordOccurences
+
+func (s byOccurenceThenWord) Len() int {
+    return len(s)
+}
+
+func (s byOccurenceThenWord) Swap(i, j int) {
+    s[i], s[j] = s[j], s[i]
+}
+
+func (s byOccurenceThenWord) Less(i, j int) bool {
+	if (s[i].Occurences > s[j].Occurences) {
+		return true
+	}
+
+	if (s[i].Occurences < s[j].Occurences) {
+		return false
+	}
+
+	return s[i].Word < s[j].Word
+}
+
 func splitRawInsults(rawInsults string) []string {
 	var words []string
 	var lines = strings.Split(rawInsults, "\n")
@@ -64,8 +86,8 @@ func processWords(rawInsults []string, stopWords []string) []string {
 		if clean == "" {
 			continue
 		}
-
-		if isStopWord(stopWords, clean) {
+		
+		if (isStopWord(stopWords, lower) || isStopWord(stopWords, clean)) {
 			continue
 		}
 
@@ -85,14 +107,16 @@ func countWords(words []string) map[string]int {
 }
 
 func sortWords(countedWords map[string]int) []WordOccurences {
-	var sorted []WordOccurences
+	// Convert the `countedWords` map to a slice of WordOccurences
+	sorted := make([]WordOccurences, len(countedWords))
+	i := 0
 	for word, occurences := range countedWords {
-		sorted = append(sorted, WordOccurences{word, occurences})
+		sorted[i] = WordOccurences{word, occurences}
+		i++
 	}
 
-	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i].Occurences > sorted[j].Occurences
-	})
+	// Run a custom sort function on the slice
+	sort.Sort(byOccurenceThenWord(sorted))
 
 	return sorted
 }

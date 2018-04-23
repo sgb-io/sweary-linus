@@ -33,13 +33,18 @@ function normaliseRawWord(rawWord) {
 
 /**
  * Removes non-alphanumeric characters from a string.
+ * NOTE: Only the basic english alphabet is supported (a-z).
  * 
  * @param  {String} word e.g. "sh*t!"
  * 
  * @return {String} e.g. "sht"
  */
 function removeAlphanumeric(word) {
-    return word.replace(/\W/g, '')
+    const englishLetters = word.match(/[a-z]/g)
+
+    return (englishLetters)
+        ? englishLetters.reduce((a, b) => (a + b))
+        : ''
 }
 
 /**
@@ -64,8 +69,8 @@ function processWords(rawWords, stopWords) {
             return
         }
 
-        // Exclude stop words
-        if (stopWords.includes(alphanumeric)) {
+        // Exclude stop words (Note - `stopWords` contains non-alphanumerics)
+        if (stopWords.includes(rawWordLower) || stopWords.includes(alphanumeric)) {
             return
         }
 
@@ -128,32 +133,38 @@ function getWordCounts(words) {
  * @param  {String} insults e.g. "This code is total crap!\nFoo bar."
  * @param  {String} stopWords e.g. "and\nor\nbut\nif\nare\nbe" etc
  * 
- * @return {Array} e.g.
+ * @return {Array<String>} output lines to be printed e.g.
  * [
- *     { word: 'just', count: 196 },
- *     { word: 'dont', count: 130 },
- *     { word: 'crap', count: 120 },
+ *     '#1 - "just", 196 occurrences',
+ *     '#2 - "crap", 120 occurrences',
+ *     '#3 - "code", 113 occurrences',
  *     ...
  * ]
  */
 function main(insults, stopWords) {
+    const sentences = []
     const rawWords = getRawWords(insults)
     const words = processWords(rawWords, stopWords.split('\n'))
     const unsortedWordCounts = getWordCounts(words)
 
     // Print out the 25 most common words in order
+    // Sort by count, then alphabetical.
     const topWords = unsortedWordCounts
-        .sort((a, b) => (b.count - a.count))
+        .sort((a, b) => {
+            if (b.count !== a.count) {
+                return b.count - a.count
+            }
+            return a.word < b.word ? -1 : 1
+        })
         .slice(0, 25)
 
     topWords.forEach((topWord, index) => {
         const rank = index + 1
-        console.log(
-            `#${rank} - "${topWord.word}", ${topWord.count} occurrences`
-        )
+        const sentence = `#${rank} - "${topWord.word}", ${topWord.count} occurrences`
+        sentences.push(sentence)
     })
 
-    return topWords
+    return sentences
 }
 
 module.exports = main
