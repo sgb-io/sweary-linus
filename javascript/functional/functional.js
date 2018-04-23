@@ -32,14 +32,14 @@ function normaliseRawWord(rawWord) {
 }
 
 /**
- * Removes non-alphanumeric characters from a string.
+ * Removes non-english characters from a string.
  * NOTE: Only the basic english alphabet is supported (a-z).
  * 
  * @param  {String} word e.g. "sh*t!"
  * 
  * @return {String} e.g. "sht"
  */
-function removeAlphanumeric(word) {
+function removeNonEnglishLetters(word) {
     const englishLetters = word.match(/[a-z]/g)
 
     return (englishLetters)
@@ -62,19 +62,19 @@ function processWords(rawWords, stopWords) {
     rawWords.forEach((rawWord) => {
         // Normalize (down-case) every word
         const rawWordLower = normaliseRawWord(rawWord)
-        const alphanumeric = removeAlphanumeric(rawWordLower)
+        const englishLetters = removeNonEnglishLetters(rawWordLower)
 
         // Exclude non-alphanumeric characters
-        if (alphanumeric === '') {
+        if (englishLetters === '') {
             return
         }
 
         // Exclude stop words (Note - `stopWords` contains non-alphanumerics)
-        if (stopWords.includes(rawWordLower) || stopWords.includes(alphanumeric)) {
+        if (stopWords.includes(rawWordLower) || stopWords.includes(englishLetters)) {
             return
         }
 
-        words.push(alphanumeric)
+        words.push(englishLetters)
     })
 
     return words
