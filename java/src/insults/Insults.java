@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.LinkedHashMap;
 
@@ -60,20 +59,26 @@ public class Insults {
     }
     
     /**
-     * Accepts a HashMap of counted words, orders by occurrence & returns top 25.
+     * Accepts a HashMap of counted words, orders by occurrence then alphabetic.
+     * Returns the top 25.
      * @param allInsults
      * @return HashMap<String, Integer>
      */
     private static HashMap<String, Integer> getTopInsults(HashMap<String, Integer> allInsults) {
-        HashMap<String, Integer> topInsults
-                = allInsults.entrySet().stream()
-                        .sorted(Collections.reverseOrder(HashMap.Entry.comparingByValue()))
-                        .limit(25)
-                        .collect(
-                                Collectors.toMap(
-                                        HashMap.Entry::getKey, HashMap.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new
-                                )
-                        );
+        HashMap<String, Integer> topInsults;
+        topInsults = allInsults
+                .entrySet()
+                .stream()
+                .sorted(
+                        HashMap.Entry.<String, Integer>comparingByValue().reversed()
+                                .thenComparing(HashMap.Entry.comparingByKey())
+                )
+                .limit(25)
+                .collect(
+                    Collectors.toMap(
+                            HashMap.Entry::getKey, HashMap.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new
+                    )
+                );
 
         return topInsults;
     }
@@ -90,7 +95,7 @@ public class Insults {
         insults.forEach((insult) -> {
             Integer existingCount = unsortedInsultCounts.get(insult);
             if (existingCount == null) {
-                unsortedInsultCounts.put(insult, 0);
+                unsortedInsultCounts.put(insult, 1);
             } else {
                 unsortedInsultCounts.put(insult, existingCount + 1);
             }
@@ -118,7 +123,7 @@ public class Insults {
                 continue;
             }
 
-            if (stopWords.contains(alphanumeric)) {
+            if (stopWords.contains(alphanumeric) || stopWords.contains(normalized)) {
                 continue;
             }
 
@@ -143,7 +148,9 @@ public class Insults {
      * @return String
      */
     private static String removeAlphanumeric(String word) {
-        return word.replaceAll("[^A-Za-z0-9]", "");
+        return word
+                .replaceAll("\\s+","")
+                .replaceAll("[^a-z]", "");
     }
     
     /**
