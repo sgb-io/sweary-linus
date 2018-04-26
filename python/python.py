@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import sys
-import re
 
 def strip_non_alphanumeric(str):
     # Restrict to letters/numbers only
