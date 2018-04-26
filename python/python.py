@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 import sys
-
+import re
 
 def strip_non_alphanumeric(str):
-    # lambda for finding if char is dirty or not
+    # Restrict to letters/numbers only
     is_char_ok = lambda c: (
-        ord(c) == 32 or  # char is a space
         ord(c) in range(48, 58) or  # char is a number
-        ord(c) in range(65, 91) or  # char is upper case
         ord(c) in range(97, 123)  # char is lower case
     )
-    return ''.join([c for c in str if is_char_ok(c)])
+    cleaned = ''.join([c for c in str if is_char_ok(c)])
+
+    return cleaned
 
 
 def count_frequency(list_of_words):
@@ -28,11 +28,11 @@ def count_frequency(list_of_words):
     return counts
 
 
-def get_top_frequencies(frequencies_as_dict):
-    # Easier to order a list.
+def get_top_frequencies(counts):
+    # Order the counts dict by value (occurences) then key (word)
     return sorted(
-        [[key, frequencies_as_dict[key]] for key in frequencies_as_dict.keys()],
-        key=lambda i: -i[1]
+        counts.items(),
+        key=lambda i: (-i[1], i[0]), reverse=False
     )
 
 
@@ -52,22 +52,29 @@ def generate_stop_words(stop_words_file):
 def main(linus_name, stopwords_file):
     stream = generate_linus(linus_name)
     stop_words = generate_stop_words(stopwords_file)
-    clean = strip_non_alphanumeric(stream)  # clean out characters
-    clean_to_list = clean.split(' ')  # split str to list
+
+    # Convert to a flat list of all words
+    lines = stream.split('\n')
+    line_words = [
+        line.split(' ') for line in lines
+    ]
+    words = [word for lines in line_words for word in lines]
 
     # Lowercase all items in list.
-    normalised_list = [
-        item.lower() for item in clean_to_list if type(item) == str
+    lower_cased_words = [
+        word.lower() for word in words if type(word) == str
     ]
 
     # Remove all stop words and empty words
-    no_stop_words = [
-        word for word in normalised_list if
+    cleaned_words = [
+        strip_non_alphanumeric(word) for word in lower_cased_words if
+        strip_non_alphanumeric(word) not in stop_words and
+        strip_non_alphanumeric(word) != '' and
         word not in stop_words and
         word != ''
     ]
 
-    frequencies = count_frequency(no_stop_words)
+    frequencies = count_frequency(cleaned_words)
     top_twenty_five = get_top_frequencies(frequencies)[:25]
 
     # Pretty print those bitches
