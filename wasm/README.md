@@ -1,6 +1,6 @@
 # WebAssembly
 
-Rather than an independent, this version of Sweary Linus is a port of the C++ implementation, compiled for the web via WebAssembly!
+Rather than an implementation, this version of Sweary Linus is a port of the C++ implementation, compiled for the web via WebAssembly!
 
 ## Install it
 
@@ -33,6 +33,8 @@ Install deps as above, then, something like:
 
 `$ emcc -std=c++11 main.cpp -s WASM=1 --preload-file insults.txt --preload-file stopwords.txt -o main.html`
 
-Note that `main.cpp` and the two text files should be in the same dir for it to work. An easy way is to temporarily copy `main.cpp` into this dir then run the above command.
+Notes:
 
-Note that C++ 11 is enabled (I used 1 feature, a lambda)
+- `main.cpp` and the two text files should be in the same dir for it to work. An easy way is to temporarily copy all of them into this dir then run the above command.
+- C++ 11 is required (I used 1 feature, a lambda), it's enabled using the `-std=c++11` flag (see command above)
+- The C++ program expects you to pass 2 args, i.e. paths to the 2 text files to work. Emscripten provides a virtual filesystem to make this work. I added 2 lines in the generated `main.js` @ L222 to inject `insults.txt` and `stopwords.txt` as the 2 args in the browser.
