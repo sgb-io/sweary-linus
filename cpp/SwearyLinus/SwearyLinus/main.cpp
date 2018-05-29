@@ -167,8 +167,7 @@ std::set<std::pair<std::string, int>, Comparator> sort_insults(std::map<std::str
     typedef std::function<bool(std::pair<std::string, int>, std::pair<std::string, int>)> Comparator;
     
     // Comparator function to sort by occurences, then word (alphabetical)
-    Comparator compFunctor =
-    [](std::pair<std::string, int> elem1 ,std::pair<std::string, int> elem2)
+    Comparator compFunctor = [](std::pair<std::string, int> elem1 ,std::pair<std::string, int> elem2)
     {
         if (elem1.second < elem2.second) return false;
         if (elem2.second < elem1.second) return true;
@@ -226,11 +225,11 @@ int main(int argc, const char * argv[]) {
         sorted_insults = sort_insults(counted_insults);
         
         // Convert the sorted insults back into a vector
-        std::vector<std::pair<std::string, int>> sorted_insults_vec;
+        std::vector<std::pair<std::string, int> > sorted_insults_vec;
         std::copy(sorted_insults.begin(), sorted_insults.end(), std::back_inserter(sorted_insults_vec));
         
         // Print the top 25
-        for (vector<std::pair<std::string, int>>::iterator t=sorted_insults_vec.begin(); t!=sorted_insults_vec.end(); ++t)
+        for (vector<std::pair<std::string, int> >::iterator t=sorted_insults_vec.begin(); t!=sorted_insults_vec.end(); ++t)
         {
             std::pair<std::string, int> current_item;
             current_item = *t;
