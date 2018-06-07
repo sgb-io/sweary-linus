@@ -2,6 +2,8 @@
 
 SwearyLinus output... rendered in webgl.
 
+![Output](output.jpg)
+
 Uses `create-react-app` for conveineince (single component, imports our webgl code and displays on screen).
 
 ## Install it
