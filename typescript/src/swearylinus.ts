@@ -12,7 +12,6 @@ const linesToWords: LinesToWords = (rawText: string) => {
         .map((lineWords: string) => {
             return lineWords
                 .split(' ')
-                .map(lineWord => lineWord) // TODO is this line needed?
         })
         .reduce((a: Array<string>, b: Array<string>) => {
             return a.concat(b)
