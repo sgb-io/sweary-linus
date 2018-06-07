@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import RenderWebGL from './sweary-linus-webgl'
+import RenderWebGL from './webgl/sweary-linus-webgl'
 
 class SwearyLinusWebGL extends Component {
     componentDidMount() {
