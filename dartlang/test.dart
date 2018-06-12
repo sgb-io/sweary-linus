@@ -2,6 +2,14 @@ import 'dart:async';
 import 'package:test/test.dart';
 import 'main.dart' as SwearyLinus;
 
+Future main() async {
+  List<String> output =
+      await SwearyLinus.main(['../insults.txt', '../stopwords.txt']);
+  test('Generates the expected SwearyLinus output', () {
+    expect(output, equals(expectedOutput));
+  });
+}
+
 List<String> expectedOutput = [
   '#1 - "just", 196 occurrences',
   '#2 - "crap", 120 occurrences',
@@ -29,10 +37,3 @@ List<String> expectedOutput = [
   '#24 - "kind", 40 occurrences',
   '#25 - "actually", 38 occurrences',
 ];
-
-Future main() async {
-  var output = await SwearyLinus.main(['../insults.txt', '../stopwords.txt']);
-  test('Generates the expected SwearyLinus output', () {
-    expect(output, equals(expectedOutput));
-  });
-}

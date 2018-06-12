@@ -16,4 +16,6 @@ e.g. from this dir:
 
 ## Run my tests
 
+From this directory (filepaths to insults & stopwords hardcoded)
+
 `dart test.dart`

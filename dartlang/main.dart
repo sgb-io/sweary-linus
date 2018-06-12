@@ -1,89 +1,7 @@
-import 'dart:io';
 import 'dart:async';
-import 'dart:convert';
 import 'dart:collection';
-
-Future readLines(String filepath) async {
-  return new File(filepath)
-      .openRead()
-      .transform(utf8.decoder)
-      .transform(const LineSplitter());
-}
-
-Future getInsults(String filepath) async {
-  List<String> words = [];
-  var insultLines = await readLines(filepath);
-  await for (var line in insultLines) {
-    for (var word in line.split(' ')) {
-      words.add(word);
-    }
-  }
-
-  return words;
-}
-
-Future getStopwords(String filepath) async {
-  List<String> words = [];
-  var stopwordLines = await readLines(filepath);
-  await for (var line in stopwordLines) {
-    words.add(line);
-  }
-
-  return words;
-}
-
-String removeNonLetters(String word) {
-  return word.replaceAll(new RegExp(r'[^a-z]'), '');
-}
-
-List<String> getCleanedInsults(List<String> insults, List<String> stopwords) {
-  List<String> cleanInsults = [];
-
-  for (var rawInsult in insults) {
-    String asLower = rawInsult.toLowerCase();
-    String asLetters = removeNonLetters(asLower);
-
-    if (asLetters == '') {
-      continue;
-    }
-
-    if (stopwords.contains(asLower) || stopwords.contains(asLetters)) {
-      continue;
-    }
-
-    cleanInsults.add(asLetters);
-  }
-
-  return cleanInsults;
-}
-
-LinkedHashMap sortWordCounts(LinkedHashMap wordCounts) {
-  LinkedHashMap resMap = new LinkedHashMap();
-  List mapKeys = wordCounts.keys.toList(growable: false);
-  mapKeys.sort((a, b) => wordCounts[b] - wordCounts[a]);
-
-  // TODO need to sort by the key as a secondary sort...
-
-  for (var key in mapKeys) {
-    resMap[key] = wordCounts[key];
-  }
-
-  return resMap;
-}
-
-LinkedHashMap<String, int> countWords(List<String> words) {
-  LinkedHashMap<String, int> wordCounts = new LinkedHashMap();
-
-  for (var word in words) {
-    if (!wordCounts.containsKey(word)) {
-      wordCounts[word] = 1;
-    } else {
-      wordCounts[word] += 1;
-    }
-  }
-
-  return wordCounts;
-}
+import 'dart:convert';
+import 'dart:io';
 
 Future main(List<String> arguments) async {
   if (arguments.length != 2) {
@@ -114,4 +32,91 @@ Future main(List<String> arguments) async {
   }
 
   return outputLines;
+}
+
+LinkedHashMap<String, int> countWords(List<String> words) {
+  LinkedHashMap<String, int> wordCounts = new LinkedHashMap();
+
+  for (var word in words) {
+    if (!wordCounts.containsKey(word)) {
+      wordCounts[word] = 1;
+    } else {
+      wordCounts[word] += 1;
+    }
+  }
+
+  return wordCounts;
+}
+
+List<String> getCleanedInsults(List<String> insults, List<String> stopwords) {
+  List<String> cleanInsults = [];
+
+  for (var rawInsult in insults) {
+    String asLower = rawInsult.toLowerCase();
+    String asLetters = removeNonLetters(asLower);
+
+    if (asLetters == '') {
+      continue;
+    }
+
+    if (stopwords.contains(asLower) || stopwords.contains(asLetters)) {
+      continue;
+    }
+
+    cleanInsults.add(asLetters);
+  }
+
+  return cleanInsults;
+}
+
+Future getInsults(String filepath) async {
+  List<String> words = [];
+  var insultLines = await readLines(filepath);
+  await for (var line in insultLines) {
+    for (var word in line.split(' ')) {
+      words.add(word);
+    }
+  }
+
+  return words;
+}
+
+Future getStopwords(String filepath) async {
+  List<String> words = [];
+  var stopwordLines = await readLines(filepath);
+  await for (var line in stopwordLines) {
+    words.add(line);
+  }
+
+  return words;
+}
+
+Future readLines(String filepath) async {
+  return new File(filepath)
+      .openRead()
+      .transform(utf8.decoder)
+      .transform(const LineSplitter());
+}
+
+String removeNonLetters(String word) {
+  return word.replaceAll(new RegExp(r'[^a-z]'), '');
+}
+
+LinkedHashMap sortWordCounts(LinkedHashMap wordCounts) {
+  LinkedHashMap resMap = new LinkedHashMap();
+  List mapKeys = wordCounts.keys.toList(growable: false);
+
+  // Sort by value (occurences), then key (word, implicitly alphabetical)
+  mapKeys.sort((a, b) {
+    if (wordCounts[b] == wordCounts[a]) {
+      return a.compareTo(b);
+    } else {
+      return wordCounts[b] - wordCounts[a];
+    }
+  });
+  for (var key in mapKeys) {
+    resMap[key] = wordCounts[key];
+  }
+
+  return resMap;
 }
