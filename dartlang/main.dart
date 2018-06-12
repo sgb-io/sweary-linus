@@ -9,14 +9,18 @@ Future readLines(String filepath) async {
       .transform(const LineSplitter());
 }
 
-void main(List<String> arguments) async {
+Future main(List<String> arguments) async {
   if (arguments.length != 2) {
     stderr.writeln(
         'Not enough arguments. Example usage: dart main.dart ../insults.txt ../stopwords.txt');
   }
 
+  List<String> outputLines = [];
   var lines = await readLines(arguments[0]);
   await for (var line in lines) {
     stdout.writeln(line);
+    outputLines.add(line);
   }
+
+  return outputLines;
 }

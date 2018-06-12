@@ -11,3 +11,7 @@ Note: if you already installed Dart 1.x via homebrew, use `brew upgrade dart --d
 e.g. from this dir:
 
 `dart main.dart ../insults.txt ../stopwords.txt`
+
+## Run my tests
+
+`dart test.dart`
