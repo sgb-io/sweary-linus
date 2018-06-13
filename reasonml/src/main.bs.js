@@ -13,6 +13,12 @@ var getFileContents = ( function(filepath) {
 
 var InvalidArguments = Caml_exceptions.create("Main-Reasonml.InvalidArguments");
 
+function convertToSingleWords(rawWords) {
+  return (function (param) {
+      return param.split(rawWords);
+    });
+}
+
 function main(args) {
   var argCount = args.length;
   if (argCount < 2) {
@@ -33,5 +39,6 @@ main(( process.argv.slice(2) ));
 exports.fs = fs;
 exports.getFileContents = getFileContents;
 exports.InvalidArguments = InvalidArguments;
+exports.convertToSingleWords = convertToSingleWords;
 exports.main = main;
 /* fs Not a pure module */

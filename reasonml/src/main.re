@@ -8,6 +8,12 @@ let getFileContents: string => string = [%bs.raw
 
 exception InvalidArguments(string);
 
+let convertToSingleWords = (rawWords: string) => {
+  /* TODO how to iterate this? */
+  let lines = Js.String.split(rawWords);
+  lines;
+};
+
 let main = args => {
   let argCount = Array.length(args);
   if (argCount < 2) {
